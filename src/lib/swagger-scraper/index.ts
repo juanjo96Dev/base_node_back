@@ -2,6 +2,7 @@ import { env } from '@src/env';
 import glob from 'glob';
 import fs from 'fs-extra';
 import { Logger } from '@lib/logger';
+import * as paths from 'path';
 
 const log = new Logger(__dirname);
 
@@ -72,9 +73,58 @@ const getNameElm = (name: string, array: any[]) => {
     const found = array[array.findIndex((sub) => sub.indexOf(name) !== -1)];
     return found ? found[1] : undefined;
 };
+// Transform types to conventional types in swagger
+const conventionalTypes = (type: string) => {
+    const result = {};
+    switch (type.toLowerCase()) {
+        case 'date':
+            result['type'] = 'string';
+            result['format'] = 'date-time';
+        break;
+        default:
+            result['type'] = type;
+    }
+
+    return result;
+};
+
+// Get schema for body
+const getBodySchema = (cadena: string) => {
+    /**
+     * 0 - Property name
+     * 1 - Type of property
+     */
+    const pattern = /(?:@\w+\('?\w*'?\)[\n\s]+)*\s+@column[^)]+\)\n\s+public\s([\w_]+):\s(\w+)/gmi;
+
+    const requires = [];
+
+    let index = 0;
+
+    const columns = getSubGroups(cadena, pattern);
+
+    // Detect requires properties
+    let group;
+    while ((group = pattern.exec(cadena)) !== null) {
+        if (group[0].toLowerCase().indexOf('isoptional') === -1) {
+            requires.push(columns[index][0]);
+        }
+        index++;
+    }
+
+    const result = {
+        required: requires,
+        properties: {},
+    };
+
+    columns.map(elm => {
+        result.properties[elm[0]] = conventionalTypes(elm[1]);
+    });
+
+    return result;
+};
 
 // Get schema for required elements to execute route element
-export const getElmJSON = (cadena: string) => {
+const getElmJSON = (cadena: string, body: string) => {
     const result = {};
 
     /**
@@ -117,8 +167,7 @@ export const getElmJSON = (cadena: string) => {
                                 'application/json': {
                                     schema: {
                                         type: 'object',
-                                        properties: {
-                                        },
+                                            ...getBodySchema(body),
                                     },
                                 },
                             },
@@ -154,24 +203,24 @@ export const swaggerScraper = async () => {
 
             const tag = getMatches(file, 2)['matches'][0];
 
+            const modelFile = glob(paths.resolve(`src/api/models/${tag[0].charAt(0).toUpperCase() + tag[0].slice(1) + '.ts'}`), {
+                sync: true,
+            }).map((f) => fs.readFileSync(f, 'utf8'))[0];
+
             tags.push({ name: tag[0] });
 
             let index = 0;
             routes['matches'].forEach((element) => {
-                const elms = getElmJSON(routes['full'][index++]);
+                const elms = getElmJSON(routes['full'][index++], modelFile);
 
                 const method = element[1].toLowerCase();
 
                 const contenido = {
                     tags: tag,
                     responses: {},
+                    ...getComments(element[0], ['summary', 'description']),
+                    ...elms,
                 };
-
-                Object.assign(
-                    contenido,
-                    getComments(element[0], ['summary', 'description']),
-                    elms
-                );
 
                 if (element[2] !== '') {
                     // Ruta distinta

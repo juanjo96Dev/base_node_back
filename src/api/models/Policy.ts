@@ -19,7 +19,7 @@ export class Policy {
     @Column({
         name: 'email',
     })
-    public email?: string;
+    public email: string;
 
     @IsNotEmpty()
     @Column({
