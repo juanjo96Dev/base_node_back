@@ -1,11 +1,5 @@
 # NODE JS + EXPRESS + TYPESCRIPT RESTFUL API
 
-## What
-
-Our main goal is to build a WEB API based on the information provided by these 2 endpoints:
-* http://www.mocky.io/v2/5808862710000087232b75ac
-* http://www.mocky.io/v2/580891a4100000e8242b75c5
-
 ### FEATURES
 
 - [x] **Authentication and authorization by roles**.
@@ -13,11 +7,13 @@ Our main goal is to build a WEB API based on the information provided by these 2
 - [x] **Solution properly structured**
 - [x] **Usage of patterns** with Repository pattern
 - [x] **Quality code**
-- [x] **API documentation** with SWAGGER
+- [x] **Automatic API documentation** with SWAGGER
 - [x] **Testing (unit + e2e)**
 - [x] **Error handling**
 - [x] **Logs** with Morgan and Wisnton
 - [x] **MYSQL Database** with Typeorm
+- [x] **Metrics** with Appmetrics dash
+- [x] **File upload** with Multer
 
 
 ## Table of Contents
@@ -85,7 +81,7 @@ yarn start serve
 ### Step 4: Enjoy!
 
 Go to http://localhost:3000/swagger and try out this awesome API. Because the users do not have a password set, **the password** of each one is **the name of the user**.
-For example: for logging in with the (admin) user Manning. 
+For example: for logging in with the (admin) user Manning.
 - Username: Manning
 - Password: Manning
 
@@ -109,12 +105,12 @@ All script are defined in the `package-scripts.js` file, but the most important 
 
 ### Building the project and running it
 
-- Run `yarn start build` 
+- Run `yarn start build`
 - To start the built app use `yarn start`.
 
 ### Checking licenses
 
-- Run `yarn licenses list` 
+- Run `yarn licenses list`
 > Running this command will list, all of the packages that were installed by yarn or yarn install, and give you the license associated with each package
 
 ## API Routes

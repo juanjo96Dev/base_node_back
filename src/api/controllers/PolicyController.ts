@@ -1,11 +1,12 @@
 import {
-     Body, Delete, Get, JsonController, OnUndefined, Param, Post, Put, QueryParam
+     Body, Delete, Get, JsonController, OnUndefined, Param, Post, Put, QueryParam, Authorized
 } from 'routing-controllers';
 
 import { PolicyNotFoundError } from '../errors/PolicyNotFoundError';
 import { Policy } from '../models/Policy';
 import { PolicyService } from '../services/PolicyService';
 
+@Authorized(['user', 'admin'])
 @JsonController('/policies')
 export class PolicyController {
 

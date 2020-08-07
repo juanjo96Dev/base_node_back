@@ -16,6 +16,9 @@ export function banner(log: Logger): void {
         if (env.swagger.enabled) {
             log.info(`Swagger      : ${route()}${env.swagger.route}`);
         }
+        if ( env.metrics.enabled) {
+            log.info(`Metrics      : ${route()}/metrics`);
+        }
         log.info('-------------------------------------------------------');
         log.info('');
     } else {

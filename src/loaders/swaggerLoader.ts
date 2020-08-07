@@ -28,7 +28,7 @@ export const swaggerLoader: MicroframeworkLoader = async (settings: Microframewo
 
             swaggerFile.paths = swaggerScrap.paths;
 
-            swaggerFile.components = {};
+            swaggerFile.components.requestBodies = swaggerFile.components.schemas = {};
         }
 
         expressApp.use(

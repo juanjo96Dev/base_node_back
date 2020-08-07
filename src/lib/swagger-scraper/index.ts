@@ -52,13 +52,15 @@ const getComments = (cadena, array): object => {
 const getMatches = (cadena: string, element: number): object => {
     /**
      * 0 - path
-     * 1 - method, $3 params, $7 function
+     * 1 - method, $2 params, $3 function
      * 2 - tag
+     * 3 - Security
      */
     const patterns = [
         "@JsonController\\('([^']+)'\\)",
-        "(?:\\/\\*\\*([^\\t]+)\\*\\/)?\\n\\s+@(all|checkout|connect|copy|delete|get|head|lock|merge|mkactivity|mkcol|move|m-search|notify|options|patch|post|propfind|proppatch|purge|put|report|search|subscribe|trace|unlock|unsubscribe)\\(\\'?([\\w:\\/]*)\\'?\\)\\n?\\s*[\\w@]*\\(?(\\w+)?\\)?\\n\\s+[^\\n]+\\n\\s+return ([\\w.]+)",
+        '(?:\\/\\*\\*(?:[\\t\\*\\s]+(?<=\\s+\\*[^\\/])[^\\n]+)*\\n\\s+\\*\\/)?\\n\\s+(?:@\\w+\\([^)]*\\)[\\n\\s]+)*@(all|checkout|connect|copy|delete|get|head|lock|merge|mkactivity|mkcol|move|m-search|notify|options|patch|post|propfind|proppatch|purge|put|report|search|subscribe|trace|unlock|unsubscribe)\\(\'?([\\w:\\/]*)\'?\\)\\n?\\s*[\\w@]*\\(?(\\w+)?\\)?\\n\\s+[^\\n]+\\n\\s+return ([\\w.]+)',
         "from ['][^m]+models\\/([^']+)",
+        '@authorized([^)]+)[^{]+class[^{]+',
     ];
 
     const exp = new RegExp(patterns[element], 'gmi');
@@ -171,6 +173,7 @@ const getElmJSON = (cadena: string, body: string) => {
                                     },
                                 },
                             },
+                            required: true,
                         };
                     }
             }
@@ -203,6 +206,8 @@ export const swaggerScraper = async () => {
 
             const tag = getMatches(file, 2)['matches'][0];
 
+            const security = getMatches(file, 3)['matches'].length > 0 ? [{basicAuth: []}] : [];
+
             const modelFile = glob(paths.resolve(`src/api/models/${tag[0].charAt(0).toUpperCase() + tag[0].slice(1) + '.ts'}`), {
                 sync: true,
             }).map((f) => fs.readFileSync(f, 'utf8'))[0];
@@ -210,21 +215,28 @@ export const swaggerScraper = async () => {
             tags.push({ name: tag[0] });
 
             let index = 0;
-            routes['matches'].forEach((element) => {
-                const elms = getElmJSON(routes['full'][index++], modelFile);
 
-                const method = element[1].toLowerCase();
+            for (const element of routes['matches']) {
+                const full = routes['full'][index++];
+                const elms = getElmJSON(full, modelFile);
+
+                const method = element[0].toLowerCase();
+
+                if (full.indexOf('Authorized') > 0) {
+                    security.push({basicAuth: []});
+                }
 
                 const contenido = {
                     tags: tag,
+                    security: security,
                     responses: {},
-                    ...getComments(element[0], ['summary', 'description']),
+                    ...getComments(full, ['summary', 'description']),
                     ...elms,
                 };
 
-                if (element[2] !== '') {
+                if (element[1] !== '') {
                     // Ruta distinta
-                    const newPath = element[2].replace(/:(\w+)/, '{$1}');
+                    const newPath = element[1].replace(/:(\w+)/, '{$1}');
                     if (!swaggerPaths[path + newPath]) {
                         swaggerPaths[path + newPath] = {};
                     }
@@ -232,7 +244,7 @@ export const swaggerScraper = async () => {
                 } else {
                     swaggerPaths[path][method] = contenido;
                 }
-            });
+            }
         } else {
             log.error(`There is an error with the controller file in '${dir}'`);
         }

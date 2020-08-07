@@ -61,4 +61,7 @@ export const env = {
         username: getOsEnv('SWAGGER_USERNAME'),
         password: getOsEnv('SWAGGER_PASSWORD'),
     },
+    metrics: {
+        enabled: toBool(getOsEnv('METRICS_ENABLED')),
+    },
 };
