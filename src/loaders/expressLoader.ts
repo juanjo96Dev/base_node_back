@@ -41,10 +41,10 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
             const accessLogStream = fs.createWriteStream(path.join(__dirname, '../../', 'logs', 'performance.csv'), { flags: 'a' });
             expressApp.use(morgan(':method\,:url\,:status\,:response-time\,:res[content-length]', { stream: accessLogStream }));
 
-            // 404 error
-            expressApp.use((req, res, next) => {
-                res.status(404).json('Error 404: Not found');
-            });
+            // // 404 error
+            // expressApp.use((req, res, next) => {
+            //     res.status(404).json('Error 404: Not found');
+            // });
 
             const server = expressApp.listen(env.app.port);
             settings.setData('express_server', server);

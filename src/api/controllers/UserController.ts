@@ -2,9 +2,9 @@ import {
     Body, Delete, Get, JsonController, OnUndefined, Param, Post, Put, Req, QueryParam, Authorized
 } from 'routing-controllers';
 
-import { UserNotFoundError } from '../errors/UserNotFoundError';
-import { User } from '../models/User';
-import { UserService } from '../services/UserService';
+import { UserNotFoundError } from '@errors/UserNotFoundError';
+import { User } from '@models/User';
+import { UserService } from '@services/UserService';
 
 @JsonController('/users')
 export class UserController {
@@ -15,8 +15,9 @@ export class UserController {
 
     @Authorized(['user', 'admin'])
     @Get()
-    public find(@QueryParam('name') name: string): Promise<User[] | undefined> {
-        return this.userService.find(name);
+    // tslint:disable-next-line: no-shadowed-variable
+    public find(@QueryParam('name') name: string) {
+       return this.userService.find(name);
     }
 
     @Authorized(['user', 'admin'])
@@ -41,7 +42,7 @@ export class UserController {
 
     @Authorized(['admin'])
     @Post()
-    public create(@Body() user: User): Promise<User> {
+    public create(@Body() user: User) {
         return this.userService.create(user);
     }
 

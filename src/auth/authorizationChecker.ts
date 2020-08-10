@@ -11,6 +11,7 @@ export function authorizationChecker(connection: Connection): (action: Action, r
 
     return async function innerAuthorizationChecker(action: Action, authorizedRoles: string[]): Promise<boolean> {
         const credentials = authService.parseBasicAuthFromRequest(action.request);
+        console.log(action, authorizedRoles);
 
         if (credentials === undefined) {
             log.warn('No credentials given');

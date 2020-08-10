@@ -1,12 +1,12 @@
 import { Service } from 'typedi';
 import { OrmRepository } from 'typeorm-typedi-extensions';
-import uuid from 'uuid';
 
 import { EventDispatcher, EventDispatcherInterface } from '../../decorators/EventDispatcher';
 import { Logger, LoggerInterface } from '../../decorators/Logger';
 import { User } from '../models/User';
 import { UserRepository } from '../repositories/UserRepository';
 import { events } from '../subscribers/events';
+import bcrypt from 'bcrypt';
 
 @Service()
 export class UserService {
@@ -16,11 +16,19 @@ export class UserService {
         @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
         @Logger(__filename) private log: LoggerInterface
     ) { }
-
-    public find(name?: string): Promise<User[]> {
+    public async find(email: string): Promise<User> {
         this.log.info('Find all users by query');
-        const query = name ? { name } : {};
-        return this.userRepository.find({ relations: ['policies'], where: query });
+        const list = await User.findOne(
+            { where: {
+                email: email,
+            },
+        });
+
+        if (list) {
+            return list;
+        } else {
+            throw new Error('User not found');
+        }
     }
 
     public findOne(id: string): Promise<User | undefined> {
@@ -34,16 +42,28 @@ export class UserService {
     }
 
     public async create(user: User): Promise<User> {
-        this.log.info('Create a new user => ', user.toString());
-        user.id = uuid.v1();
-        const newUser = await this.userRepository.save(user);
-        this.eventDispatcher.dispatch(events.user.created, newUser);
-        return newUser;
+
+        if (await User.findOne({where: {email: user.email}})) {
+            throw new Error('User already exists!');
+        } else {
+            const BCRYPT_SALT_ROUNDS = 12;
+            let newUser;
+            await bcrypt.hash(user.password, BCRYPT_SALT_ROUNDS)
+            .then(async (hashedPassword)  => {
+                user.password = hashedPassword;
+                newUser = await this.userRepository.save(user);
+                this.eventDispatcher.dispatch(events.user.created, newUser);
+            })
+            .catch((error) => {
+                throw new Error(`Error saving user: ${error}`);
+            });
+
+            return newUser;
+        }
     }
 
     public update(id: string, user: User): Promise<User> {
         this.log.info('Update a user');
-        user.id = id;
         return this.userRepository.save(user);
     }
 

@@ -16,6 +16,7 @@ moduleAlias.addAliases({
     '@validators'	    : __dirname + '/api/validators',
     '@seeds'		    : __dirname + '/database/seeds',
     '@migrations'       : __dirname + '/database/migrations',
+    '@auth'             : __dirname + '/auth',
     '@src'		        : __dirname,
 });
 

@@ -15,6 +15,7 @@ const getControllers = async (): Promise<object> => {
         return {
             content: fs.readFileSync(file, 'utf8'),
             path: file,
+            name: /(\w+)Controller/.exec(file)[1],
         };
     });
 
@@ -96,7 +97,7 @@ const getBodySchema = (cadena: string) => {
      * 0 - Property name
      * 1 - Type of property
      */
-    const pattern = /(?:@\w+\('?\w*'?\)[\n\s]+)*\s+@column[^)]+\)\n\s+public\s([\w_]+):\s(\w+)/gmi;
+    const pattern = /(?:@Is\w+\('?\w*'?\)[\n\s]+)+[^)]+\)\n\s+public\s([\w_]+):\s(\w+)/gmi;
 
     const requires = [];
 
@@ -126,7 +127,7 @@ const getBodySchema = (cadena: string) => {
 };
 
 // Get schema for required elements to execute route element
-const getElmJSON = (cadena: string, body: string) => {
+const getElmJSON = (cadena: string, full: string) => {
     const result = {};
 
     /**
@@ -164,6 +165,23 @@ const getElmJSON = (cadena: string, body: string) => {
                     break;
                 default:
                     if (!result['requestBody']) {
+
+                        const path = new RegExp(`import\\s*\\{\\s*${params[3]}\\s*\\}\\s*from\\s*'([^']+)'`, 'gmi').exec(full)[1].split('/');
+
+                        let fullPath: string;
+
+                        switch (path[0]) {
+                            case '@validators':
+                                fullPath = 'src/api/validators';
+                                break;
+                            default:
+                                fullPath = 'src/api/models';
+                        }
+
+                        const body = glob(paths.resolve(`${fullPath}/${path[1]}.ts`), {
+                            sync: true,
+                            }).map((f) => fs.readFileSync(f, 'utf8'))[0];
+
                         result['requestBody'] = {
                             content: {
                                 'application/json': {
@@ -194,44 +212,36 @@ export const swaggerScraper = async () => {
     Object.keys(files).forEach((num) => {
         const file = files[num]['content'];
         const dir = files[num]['path'];
-        const path =
-            getMatches(file, 0)['length'] > 0
-                ? getMatches(file, 0)['matches'][0]
-                : '';
+        const path = getMatches(file, 0)['length'] > 0 ? getMatches(file, 0)['matches'][0] : '';
 
         if (path !== '') {
             swaggerPaths[path] = {};
 
             const routes = getMatches(file, 1);
 
-            const tag = getMatches(file, 2)['matches'][0];
+            const tag = files[num]['name'];
 
             const security = getMatches(file, 3)['matches'].length > 0 ? [{basicAuth: []}] : [];
 
-            const modelFile = glob(paths.resolve(`src/api/models/${tag[0].charAt(0).toUpperCase() + tag[0].slice(1) + '.ts'}`), {
-                sync: true,
-            }).map((f) => fs.readFileSync(f, 'utf8'))[0];
-
-            tags.push({ name: tag[0] });
+            tags.push({ name: tag});
 
             let index = 0;
 
             for (const element of routes['matches']) {
                 const full = routes['full'][index++];
-                const elms = getElmJSON(full, modelFile);
 
                 const method = element[0].toLowerCase();
 
-                if (full.indexOf('Authorized') > 0) {
+                if (full.indexOf('Authorized') > 0 && security.length === 0) {
                     security.push({basicAuth: []});
                 }
 
                 const contenido = {
-                    tags: tag,
+                    tags: [tag],
                     security: security,
                     responses: {},
                     ...getComments(full, ['summary', 'description']),
-                    ...elms,
+                    ...getElmJSON(full, file),
                 };
 
                 if (element[1] !== '') {
