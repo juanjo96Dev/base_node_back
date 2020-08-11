@@ -1,33 +1,28 @@
 import * as express from 'express';
 import { Service } from 'typedi';
-import { OrmRepository } from 'typeorm-typedi-extensions';
 
 import { User } from '../api/models/User';
-import { UserRepository } from '../api/repositories/UserRepository';
 import { Logger, LoggerInterface } from '../decorators/Logger';
 import { Login } from '@validators/login.validator';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { env } from '@src/env';
+import { expirationTime } from '../shared/helpers/date-helper';
 
 @Service()
 export class AuthService {
 
     constructor(
-        @Logger(__filename) private log: LoggerInterface,
-        @OrmRepository() private userRepository: UserRepository
+        @Logger(__filename) private log: LoggerInterface
     ) { }
 
-    public parseBasicAuthFromRequest(req: express.Request): { name: string, password: string } {
+    public getIdBearerFromRequest(req: express.Request): number {
         const authorization = req.header('authorization');
 
-        if (authorization && authorization.split(' ')[0] === 'Basic') {
+        if (authorization && authorization.split(' ')[0] === 'Bearer') {
             this.log.info('Credentials provided by the client');
-            const decodedBase64 = Buffer.from(authorization.split(' ')[1], 'base64').toString('ascii');
-            console.log(decodedBase64, authorization);
-            const name = decodedBase64.split(':')[0];
-            const password = decodedBase64.split(':')[1];
-            if (name && password) {
-                return { name, password };
-            }
+            const verified = jwt.verify(authorization.split(' ')[1], env.app.secretKey);
+            return verified.id;
         }
 
         this.log.info('No credentials provided by the client');
@@ -35,35 +30,39 @@ export class AuthService {
     }
 
     public async login(login: Login) {
-        let samePassword = false;
+        let logged: boolean | object = false;
         await User.findOne(
             { where: {
                 email: login.email,
             },
         }).then(async (user) => {
-            samePassword =  await bcrypt.compare(login.password, user.password);
+            const samePassword =  await bcrypt.compare(login.password, user.password);
+            if (samePassword) {
+                delete user.password;
+                logged = {
+                    token: this.generateToken(user),
+                    user: user,
+                };
+            }
         })
         .catch((error) => {
             throw new Error(`Error authenticating user: ${error}`);
         });
 
-        return samePassword;
+        return logged;
     }
 
-    public async validateUser(name: string, password: string): Promise<User> {
-        const user = await this.userRepository.findOne({
-            where: {
-                name,
-            },
+    public async validateUser(id: number): Promise<User | undefined> {
+        return await User.findOne({where: {
+            id: id,
+        }}).then((user) => user).catch(() => {
+            return undefined;
         });
+    }
 
-        if (user) {
-            if (await User.comparePassword(user, password)) {
-                return user;
-            }
-        }
+    private generateToken(user: User, expiration: {amount: number, type: 'h' | 'd' | 'w' | 'y'} = {amount: 1, type: 'y'}) {
 
-        return undefined;
+        return jwt.sign({exp: expirationTime(expiration.amount, expiration.type), id: user.id}, env.app.secretKey);
     }
 
 }

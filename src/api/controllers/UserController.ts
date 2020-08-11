@@ -26,13 +26,6 @@ export class UserController {
         return req.user;
     }
 
-    @Authorized(['admin'])
-    @Get('/policy/:id')
-    @OnUndefined(UserNotFoundError)
-    public oneByPolicyNumber(@Param('id') id: string): Promise<User | undefined> {
-        return this.userService.findByPolicyNumber(id);
-    }
-
     @Authorized(['user', 'admin'])
     @Get('/:id')
     @OnUndefined(UserNotFoundError)

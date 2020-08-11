@@ -53,13 +53,13 @@ const getComments = (cadena, array): object => {
 const getMatches = (cadena: string, element: number): object => {
     /**
      * 0 - path
-     * 1 - method, $2 params, $3 function
+     * 1 - method, $2 params
      * 2 - tag
      * 3 - Security
      */
     const patterns = [
         "@JsonController\\('([^']+)'\\)",
-        '(?:\\/\\*\\*(?:[\\t\\*\\s]+(?<=\\s+\\*[^\\/])[^\\n]+)*\\n\\s+\\*\\/)?\\n\\s+(?:@\\w+\\([^)]*\\)[\\n\\s]+)*@(all|checkout|connect|copy|delete|get|head|lock|merge|mkactivity|mkcol|move|m-search|notify|options|patch|post|propfind|proppatch|purge|put|report|search|subscribe|trace|unlock|unsubscribe)\\(\'?([\\w:\\/]*)\'?\\)\\n?\\s*[\\w@]*\\(?(\\w+)?\\)?\\n\\s+[^\\n]+\\n\\s+return ([\\w.]+)',
+        '(?:\\/\\*\\*(?:[\\t\\*\\s]+(?<=\\s+\\*[^\\/])[^\\n]+)*\\n\\s+\\*\\/)?(?:@\\w+\\([^)]*\\)[\\n\\s]+)*@(all|checkout|connect|copy|delete|get|head|lock|merge|mkactivity|mkcol|move|m-search|notify|options|patch|post|propfind|proppatch|purge|put|report|search|subscribe|trace|unlock|unsubscribe)\\(\'?([\\w:\\/]*)\'?\\)\\n?\\s*[\\w@]*\\(?(\\w+)?\\)?\\n\\s+[^\\n]+[^@]+',
         "from ['][^m]+models\\/([^']+)",
         '@authorized([^)]+)[^{]+class[^{]+',
     ];
@@ -221,7 +221,7 @@ export const swaggerScraper = async () => {
 
             const tag = files[num]['name'];
 
-            const security = getMatches(file, 3)['matches'].length > 0 ? [{basicAuth: []}] : [];
+            const security = getMatches(file, 3)['matches'].length > 0 ? [{bearerAuth: []}] : [];
 
             tags.push({ name: tag});
 
@@ -233,7 +233,7 @@ export const swaggerScraper = async () => {
                 const method = element[0].toLowerCase();
 
                 if (full.indexOf('Authorized') > 0 && security.length === 0) {
-                    security.push({basicAuth: []});
+                    security.push({bearerAuth: []});
                 }
 
                 const contenido = {

@@ -4,12 +4,6 @@ import { Column, Entity, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 @Entity()
 export class User extends BaseEntity {
 
-    public static comparePassword(user: User, password: string): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            resolve(password === user.name);
-        });
-    }
-
     @PrimaryGeneratedColumn()
     public id: number;
 

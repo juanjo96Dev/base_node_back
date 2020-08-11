@@ -36,11 +36,6 @@ export class UserService {
         return this.userRepository.findOne({ relations: ['policies'], where: { id } });
     }
 
-    public findByPolicyNumber(id: string): Promise<User | undefined> {
-        this.log.info('Find one user by policy number');
-        return this.userRepository.findByPolicyNumber(id);
-    }
-
     public async create(user: User): Promise<User> {
 
         if (await User.findOne({where: {email: user.email}})) {

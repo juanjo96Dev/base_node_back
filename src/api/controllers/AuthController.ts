@@ -18,7 +18,7 @@ export class AuthController {
         const logged = await this.authService.login(login);
 
         if (logged) {
-            return res.status(HttpStatus.OK).send('Logged');
+            return res.status(HttpStatus.OK).send(logged);
         } else {
             return res.status(HttpStatus.UNAUTHORIZED).send('Incorrect credentials!');
         }
