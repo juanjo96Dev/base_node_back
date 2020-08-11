@@ -12,5 +12,5 @@ export class Role extends BaseEntity {
 
     @IsOptional()
     @Column({default: 0})
-    public defaultRole: string;
+    public defaultRole: number;
 }

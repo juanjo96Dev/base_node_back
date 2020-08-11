@@ -53,7 +53,7 @@
             "@seeds/*": ["database/seeds/*"],
             "@migrations/*": ["database/migrations/*"],
             "@auth/*": ["auth/*"],
-            "@src/*": ["./*"],
+            "@src/*": ["./*"]
         }
     }
 }

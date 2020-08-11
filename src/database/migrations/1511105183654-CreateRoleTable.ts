@@ -1,15 +1,15 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class CreateUserTable1511105183653 implements MigrationInterface {
+export class CreateRoleTable1511105183653 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<any> {
         const table = new Table({
-            name: 'user',
+            name: 'roles',
             columns: [
                 {
                     name: 'id',
                     type: 'int',
-                    length: '11',
+                    length: '10',
                     isPrimary: true,
                     isGenerated: true,
                     generationStrategy: 'increment',
@@ -21,27 +21,10 @@ export class CreateUserTable1511105183653 implements MigrationInterface {
                     isPrimary: false,
                     isNullable: false,
                 }, {
-                    name: 'surname',
-                    type: 'varchar',
-                    length: '255',
-                    isPrimary: false,
-                    isNullable: true,
-                }, {
-                    name: 'email',
-                    type: 'varchar',
-                    length: '255',
-                    isPrimary: false,
-                    isNullable: false,
-                }, {
-                    name: 'password',
-                    type: 'varchar',
-                    length: '255',
-                    isPrimary: false,
-                    isNullable: false,
-                }, {
-                    name: 'role',
+                    name: 'defaultRole',
                     type: 'int',
-                    length: '10',
+                    length: '1',
+                    default: '0',
                     isPrimary: false,
                     isNullable: false,
                 },

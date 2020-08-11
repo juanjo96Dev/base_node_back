@@ -12,7 +12,7 @@ export class User extends BaseEntity {
     @Column()
     public name: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @Column()
     public surname: string;
 
