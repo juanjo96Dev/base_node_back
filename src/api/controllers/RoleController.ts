@@ -3,7 +3,7 @@ import {JsonController, Get, Res, Authorized} from 'routing-controllers';
 import { RoleService } from '@services/RoleService';
 import HttpStatus from '../../shared/utils/http-status';
 
-@Authorized(['user'])
+@Authorized('user')
 @JsonController('/roles')
 export class AuthController {
     constructor(

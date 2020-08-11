@@ -19,6 +19,11 @@ export class RoleService {
         return this.handler(def.id, 'Default role not found!');
     }
 
+    public async getRoleByName(name: string) {
+        const def = await Role.findOne({where: { name: name}});
+        return this.handler(def.id, 'Role not found!');
+    }
+
     private handler(object: any, error: string)  {
         if (object) {
             return object;
