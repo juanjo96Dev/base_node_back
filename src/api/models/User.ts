@@ -1,5 +1,6 @@
-import { IsNotEmpty } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import { IsNotEmpty, IsOptional } from 'class-validator';
+import { Column, Entity, PrimaryGeneratedColumn, BaseEntity, OneToOne, JoinColumn } from 'typeorm';
+import { Role } from './Roles';
 
 @Entity()
 export class User extends BaseEntity {
@@ -21,14 +22,13 @@ export class User extends BaseEntity {
 
     @IsNotEmpty()
     @Column()
-    public role: string;
-
-    @IsNotEmpty()
-    @Column()
     public password: string;
 
-    public toString(): string {
-        return `${this.name} (${this.email})`;
-    }
+    @IsOptional()
+    @Column({name: 'role'})
+    public role: number;
 
+    @OneToOne(type => Role, role => role.id)
+    @JoinColumn({name: 'role'})
+    public userRole: string;
 }

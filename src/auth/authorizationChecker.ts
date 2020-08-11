@@ -23,7 +23,7 @@ export function authorizationChecker(connection: Connection): (action: Action, r
             return false;
         }
 
-        if (authorizedRoles && authorizedRoles.some( role => role === action.request.user.role)) {
+        if (authorizedRoles && authorizedRoles.some( role => role === action.request.user.userRole)) {
             log.info('Successfully checked credentials');
             return true;
         } else {

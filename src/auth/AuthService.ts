@@ -8,12 +8,14 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { env } from '@src/env';
 import { expirationTime } from '../shared/helpers/date-helper';
+import { UserService } from '../api/services/UserService';
 
 @Service()
 export class AuthService {
 
     constructor(
-        @Logger(__filename) private log: LoggerInterface
+        @Logger(__filename) private log: LoggerInterface,
+        private userService: UserService
     ) { }
 
     public getIdBearerFromRequest(req: express.Request): number {
@@ -38,10 +40,9 @@ export class AuthService {
         }).then(async (user) => {
             const samePassword =  await bcrypt.compare(login.password, user.password);
             if (samePassword) {
-                delete user.password;
                 logged = {
                     token: this.generateToken(user),
-                    user: user,
+                    user: await this.userService.userDetails(user),
                 };
             }
         })
@@ -55,7 +56,7 @@ export class AuthService {
     public async validateUser(id: number): Promise<User | undefined> {
         return await User.findOne({where: {
             id: id,
-        }}).then((user) => user).catch(() => {
+        }}).then((user) => this.userService.userDetails(user)).catch(() => {
             return undefined;
         });
     }

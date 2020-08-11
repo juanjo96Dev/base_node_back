@@ -7,6 +7,7 @@ import { User } from '../models/User';
 import { UserRepository } from '../repositories/UserRepository';
 import { events } from '../subscribers/events';
 import bcrypt from 'bcrypt';
+import { RoleService } from './RoleService';
 
 @Service()
 export class UserService {
@@ -14,9 +15,11 @@ export class UserService {
     constructor(
         @OrmRepository() private userRepository: UserRepository,
         @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
-        @Logger(__filename) private log: LoggerInterface
+        @Logger(__filename) private log: LoggerInterface,
+        private roleService: RoleService
     ) { }
-    public async find(email: string): Promise<User> {
+
+    public async find(email: string) {
         this.log.info('Find all users by query');
         const list = await User.findOne(
             { where: {
@@ -25,7 +28,7 @@ export class UserService {
         });
 
         if (list) {
-            return list;
+            return await this.userDetails(list);
         } else {
             throw new Error('User not found');
         }
@@ -36,9 +39,9 @@ export class UserService {
         return this.userRepository.findOne({ relations: ['policies'], where: { id } });
     }
 
-    public async create(user: User): Promise<User> {
+    public async create(user: User) {
 
-        if (await User.findOne({where: {email: user.email}})) {
+        if (await User.findOne({select: ['id'], where: {email: user.email}})) {
             throw new Error('User already exists!');
         } else {
             const BCRYPT_SALT_ROUNDS = 12;
@@ -46,6 +49,8 @@ export class UserService {
             await bcrypt.hash(user.password, BCRYPT_SALT_ROUNDS)
             .then(async (hashedPassword)  => {
                 user.password = hashedPassword;
+                console.log(await this.roleService.getDefaultRole());
+                user.role = Number(await this.roleService.getDefaultRole());
                 newUser = await this.userRepository.save(user);
                 this.eventDispatcher.dispatch(events.user.created, newUser);
             })
@@ -53,7 +58,7 @@ export class UserService {
                 throw new Error(`Error saving user: ${error}`);
             });
 
-            return newUser;
+            return await this.userDetails(newUser);
         }
     }
 
@@ -66,6 +71,20 @@ export class UserService {
         this.log.info('Delete a user');
         await this.userRepository.delete(id);
         return;
+    }
+
+    public async userDetails(user: User | User[]) {
+        if (user instanceof User) {
+            delete user['password'];
+            user['userRole'] = await this.roleService.getRoleById(user.role);
+        } else {
+            await Object.keys(user).forEach(async element => {
+                delete element['password'];
+                element['userRole'] = await this.roleService.getRoleById(element['role']);
+            });
+        }
+
+        return user;
     }
 
 }

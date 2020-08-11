@@ -20,7 +20,7 @@ export class UserController {
        return this.userService.find(name);
     }
 
-    @Authorized(['user', 'admin'])
+    @Authorized(['user'])
     @Get('/me')
     public findMe(@Req() req: any): Promise<User[]> {
         return req.user;
