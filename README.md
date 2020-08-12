@@ -56,9 +56,9 @@ yarn install
 
 Execute again
 
-...bash
-npm installs
-...
+```bash
+npm install
+```
 
 > There is a conflict in both packages and some npm libraries are uninstalled
 
