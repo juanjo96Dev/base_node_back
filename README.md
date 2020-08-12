@@ -54,6 +54,13 @@ yarn install
 
 > This install al the dependecies declared in the package.json file.
 
+Execute again
+
+...bash
+npm installs
+...
+
+> There is a conflict in both packages and some npm libraries are uninstalled
 
 ```bash
 yarn start db.migrate
@@ -80,10 +87,14 @@ yarn start serve
 
 ### Step 4: Enjoy!
 
-Go to http://localhost:3000/swagger and try out this awesome API. Because the users do not have a password set, **the password** of each one is **the name of the user**.
-For example: for logging in with the (admin) user Manning.
-- Username: Manning
-- Password: Manning
+Go to http://localhost:3000/swagger and try out this awesome API.
+For example: for logging in with the (admin) user in **/auth/login** and you get a ***token*** that is used to login.
+- Email: admin@admin.com
+- Password: admin
+
+### Step 5: Metrics
+
+Go to http://localhost:3000/metrics and see the server metrics
 
 
 ## Scripts and tasks
@@ -123,7 +134,7 @@ The swagger route along with swagger credentials can be modified in the `.env` f
 | **/api**       | Shows us the name, description and the version of the package.json |
 | **/swagger**   | This is the Swagger UI with our API documentation |
 | **/api/users** | User entity endpoint |
-| **/api/policies**  | Policy entity endpoint |
+| **/api/auth**  | Auth entity endpoint |
 
 
 ## Project Structure
