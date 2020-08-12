@@ -54,14 +54,6 @@ yarn install
 
 > This install al the dependecies declared in the package.json file.
 
-Execute again
-
-```bash
-npm install
-```
-
-> There is a conflict in both packages and some npm libraries are uninstalled
-
 ```bash
 yarn start db.migrate
 ```

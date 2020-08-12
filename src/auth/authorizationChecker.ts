@@ -6,13 +6,13 @@ import { Logger } from '../lib/logger';
 import { AuthService } from './AuthService';
 import { RoleService } from '../api/services/RoleService';
 
-export function authorizationChecker(connection: Connection): (action: Action, roles: string) => Promise<boolean> | boolean {
+export function authorizationChecker(connection: Connection): (action: Action, roles: any[]) => Promise<boolean> | boolean {
     const log = new Logger(__filename);
     const authService = Container.get<AuthService>(AuthService);
     // tslint:disable-next-line: prefer-const
     const roleService = Container.get<RoleService>(RoleService);
 
-    return async function innerAuthorizationChecker(action: Action, authorizedRole: string): Promise<boolean> {
+    return async function innerAuthorizationChecker(action: Action, authorizedRole: any[]): Promise<boolean> {
         const credentials = authService.getIdBearerFromRequest(action.request);
 
         if (credentials === undefined) {
@@ -26,7 +26,7 @@ export function authorizationChecker(connection: Connection): (action: Action, r
             return false;
         }
 
-        if (action.request.user.role >= await roleService.getRoleByName(authorizedRole)) {
+        if (action.request.user.role >= await roleService.getRoleByName(authorizedRole[0])) {
             log.info('Successfully checked credentials');
             return true;
         } else {

@@ -6,7 +6,7 @@ import { UserNotFoundError } from '@errors/UserNotFoundError';
 import { User } from '@models/User';
 import { UserService } from '@services/UserService';
 
-@Authorized('user')
+@Authorized(['user'])
 @JsonController('/users')
 export class UserController {
 
