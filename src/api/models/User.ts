@@ -2,7 +2,7 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn, BaseEntity, OneToOne, JoinColumn } from 'typeorm';
 import { Role } from './Roles';
 
-@Entity()
+@Entity({name: 'user'})
 export class User extends BaseEntity {
 
     @PrimaryGeneratedColumn()
