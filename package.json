@@ -1,10 +1,11 @@
 {
   "name": "netBack",
-  "version": "1.2",
+  "version": "1.2.0",
   "description": "General back",
   "main": "src/app.ts",
   "scripts": {
     "start": "nps",
+    "serve": "yarn start serve",
     "test": "npm start test",
     "build": "npm start build",
     "presetup": "yarn install",
