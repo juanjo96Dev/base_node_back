@@ -6,6 +6,7 @@ import path from 'path';
 
 import { authorizationChecker } from '../auth/authorizationChecker';
 import { currentUserChecker } from '../auth/currentUserChecker';
+import dash from 'appmetrics-dash';
 
 import { env } from '@src/env';
 import fs from 'fs';
@@ -31,6 +32,10 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
         });
 
         if (!env.isTest) {
+
+            if (env.metrics.enabled) {
+                dash.attach({url: '/metrics'});
+            }
 
             // Logs files
             if (!fs.existsSync('logs')) {
