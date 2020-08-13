@@ -1,7 +1,6 @@
 import { Application } from 'express';
 import { MicroframeworkLoader, MicroframeworkSettings } from 'microframework-w3tec';
 import { createExpressServer } from 'routing-controllers';
-import dash from 'appmetrics-dash';
 import morgan from 'morgan';
 import path from 'path';
 
@@ -32,9 +31,6 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
         });
 
         if (!env.isTest) {
-            if (env.metrics.enabled) {
-                dash.attach({url: '/metrics'});
-            }
 
             // Logs files
             fs.mkdirsSync('logs');
