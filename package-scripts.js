@@ -6,7 +6,7 @@ const { series, rimraf, } = require('nps-utils');
 
 module.exports = {
     scripts: {
-        default: 'nps start',
+        default: 'nps serve',
         /**
          * Starts the builded app from the dist directory.
          */
