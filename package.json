@@ -4,12 +4,7 @@
   "description": "General back",
   "main": "src/app.ts",
   "scripts": {
-    "start": "nps",
-    "serve": "yarn start serve",
-    "test": "npm start test",
-    "build": "npm start build",
-    "presetup": "yarn install",
-    "setup": "npm start config && npm start setup.script"
+    "serve": "yarn start serve"
   },
   "engines": {
     "node": ">=8.0.0"
