@@ -33,7 +33,9 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
         if (!env.isTest) {
 
             // Logs files
-            fs.mkdirSync('logs');
+            if (!fs.existsSync('logs')) {
+                fs.mkdirSync('logs');
+            }
             const accessLogStream = fs.createWriteStream(path.join(__dirname, '../../', 'logs', 'performance.csv'), { flags: 'a' });
             expressApp.use(morgan(':method\,:url\,:status\,:response-time\,:res[content-length]', { stream: accessLogStream }));
 
