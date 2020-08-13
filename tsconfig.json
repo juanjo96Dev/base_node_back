@@ -1,16 +1,16 @@
 {
     "compilerOptions": {
-        "target": "es2017",
+        "target": "es6",
         "module": "commonjs",
         "pretty": true,
         "sourceMap": true,
-        "outDir": "dist",
+        "outDir": "./dist",
         "importHelpers": true,
         "strict": true,
         "noImplicitAny": false,
         "strictNullChecks": false,
         "noImplicitThis": true,
-        "alwaysStrict": true,
+        "alwaysStrict": false,
         "noUnusedLocals": true,
         "noUnusedParameters": false,
         "noImplicitReturns": true,
@@ -35,7 +35,7 @@
             "es2015.reflect",
             "es2015.symbol",
             "es2015.symbol.wellknown",
-            "esnext.asynciterable"
+            "esnext"
         ],
         "paths": {
             "@loaders/*": ["loaders/*"],
@@ -55,5 +55,7 @@
             "@auth/*": ["auth/*"],
             "@src/*": ["./*"]
         }
-    }
+    },
+    "include": ["src/**/*.ts", "src/**/*.json", "src/**/*.ejs"],
+    "exclude": ["node_modules"]
 }

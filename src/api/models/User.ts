@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsEmail } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn, BaseEntity, OneToOne, JoinColumn } from 'typeorm';
 import { Role } from './Roles';
 
@@ -17,6 +17,7 @@ export class User extends BaseEntity {
     public surname: string;
 
     @IsNotEmpty()
+    @IsEmail()
     @Column()
     public email: string;
 

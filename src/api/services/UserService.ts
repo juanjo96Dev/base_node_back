@@ -49,7 +49,6 @@ export class UserService {
             await bcrypt.hash(user.password, BCRYPT_SALT_ROUNDS)
             .then(async (hashedPassword)  => {
                 user.password = hashedPassword;
-                console.log(await this.roleService.getDefaultRole());
                 user.role = Number(await this.roleService.getDefaultRole());
                 newUser = await this.userRepository.save(user);
                 this.eventDispatcher.dispatch(events.user.created, newUser);
