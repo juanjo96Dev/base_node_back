@@ -18,6 +18,9 @@ export const typeormLoader: MicroframeworkLoader = async (settings: Microframewo
         logging: env.db.logging,
         entities: env.app.dirs.entities,
         migrations: env.app.dirs.migrations,
+        ssl: {
+            ca: process.env.SSL_CERT,
+          },
     });
 
     const connection = await createConnection(connectionOptions);
