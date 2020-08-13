@@ -5,7 +5,6 @@
   "main": "src/app.ts",
   "scripts": {
     "start": "nps",
-    "serve": "yarn start serve",
     "test": "npm start test",
     "build": "npm start build",
     "presetup": "yarn install",
