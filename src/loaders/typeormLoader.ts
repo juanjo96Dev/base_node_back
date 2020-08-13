@@ -20,6 +20,7 @@ export const typeormLoader: MicroframeworkLoader = async (settings: Microframewo
         migrations: env.app.dirs.migrations,
         ssl: {
             ca: process.env.SSL_CERT,
+            rejectUnauthorized: false,
           },
     });
 

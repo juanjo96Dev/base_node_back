@@ -4,11 +4,13 @@ import * as path from 'path';
 import * as swaggerUi from 'swagger-ui-express';
 import { env } from '../env';
 import { swaggerScraper } from '@lib/swagger-scraper/index';
+import fs from 'fs';
 
 export const swaggerLoader: MicroframeworkLoader = async (settings: MicroframeworkSettings | undefined) => {
     if (settings && env.swagger.enabled) {
         const expressApp = settings.getData('express_app');
-        const swaggerFile = require(path.join(__dirname, '..', env.swagger.file));
+        const pahFile = path.join(__dirname, '..', env.swagger.file);
+        const swaggerFile = require(pahFile);
 
         swaggerFile.info = {
             title: env.app.name,
@@ -24,11 +26,25 @@ export const swaggerLoader: MicroframeworkLoader = async (settings: Microframewo
 
         if (env.swagger.scraper) {
             const swaggerScrap = await swaggerScraper();
-            swaggerFile.tags = swaggerScrap.tag;
+            if (Object.keys(swaggerScrap.paths).length > 0) {
+                swaggerFile.tags = swaggerScrap.tag;
 
-            swaggerFile.paths = swaggerScrap.paths;
+                const diff = JSON.stringify(swaggerFile.paths) !== JSON.stringify(swaggerScrap.paths);
 
-            swaggerFile.components.requestBodies = swaggerFile.components.schemas = {};
+                swaggerFile.paths = swaggerScrap.paths;
+
+                swaggerFile.components.requestBodies = swaggerFile.components.schemas = {};
+
+                if (diff) {
+                    fs.writeFile(pahFile, JSON.stringify(swaggerFile), (err) => {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        console.log('swagger.json rebuild!');
+                      });
+                }
+            }
+
         }
 
         expressApp.use(
