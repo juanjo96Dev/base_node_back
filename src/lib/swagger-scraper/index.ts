@@ -1,6 +1,6 @@
 import { env } from '@src/env';
 import glob from 'glob';
-import fs from 'fs-extra';
+import fs from 'fs';
 import { Logger } from '@lib/logger';
 import * as paths from 'path';
 

@@ -1,11 +1,11 @@
-import fs from 'fs-extra';
+import fs from 'fs';
 import multer from 'multer';
 
 const root = 'files/';
 
 const storage = multer.diskStorage({
     destination: (req: any, file: any, cb: any) => {
-        fs.mkdirsSync(root);
+        fs.mkdirSync(root);
         cb(null, root);
     },
     filename: async (req: any, file: any, cb: any) => {

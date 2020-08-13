@@ -8,7 +8,7 @@ import { authorizationChecker } from '../auth/authorizationChecker';
 import { currentUserChecker } from '../auth/currentUserChecker';
 
 import { env } from '@src/env';
-import fs from 'fs-extra';
+import fs from 'fs';
 
 export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSettings | undefined) => {
     if (settings) {
@@ -33,7 +33,7 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
         if (!env.isTest) {
 
             // Logs files
-            fs.mkdirsSync('logs');
+            fs.mkdirSync('logs');
             const accessLogStream = fs.createWriteStream(path.join(__dirname, '../../', 'logs', 'performance.csv'), { flags: 'a' });
             expressApp.use(morgan(':method\,:url\,:status\,:response-time\,:res[content-length]', { stream: accessLogStream }));
 
