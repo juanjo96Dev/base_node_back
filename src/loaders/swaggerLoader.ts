@@ -24,7 +24,7 @@ export const swaggerLoader: MicroframeworkLoader = async (settings: Microframewo
             },
         ];
 
-        if (env.swagger.scraper) {
+        if (env.swagger.scraper && process.env.NODE_ENV !== 'production') {
             const swaggerScrap = await swaggerScraper();
             if (Object.keys(swaggerScrap.paths).length > 0) {
                 swaggerFile.tags = swaggerScrap.tag;
