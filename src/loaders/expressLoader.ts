@@ -1,15 +1,15 @@
 import { Application } from 'express';
 import { MicroframeworkLoader, MicroframeworkSettings } from 'microframework-w3tec';
 import { createExpressServer } from 'routing-controllers';
-import morgan from 'morgan';
-import path from 'path';
+const morgan = require('morgan');
+const path = require('path');
 
-import { authorizationChecker } from '../auth/authorizationChecker';
-import { currentUserChecker } from '../auth/currentUserChecker';
-// import dash from 'appmetrics-dash';
+import { authorizationChecker } from '@auth/authorizationChecker';
+import { currentUserChecker } from '@auth/currentUserChecker';
+const dash = require('appmetrics-dash');
 
 import { env } from '@src/env';
-import fs from 'fs';
+const fs = require('fs');
 
 export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSettings | undefined) => {
 
@@ -35,9 +35,9 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
 
         if (!env.isTest) {
 
-            // if (env.metrics.enabled) {
-            //     dash.attach({url: '/metrics'});
-            // }
+            if (env.metrics.enabled) {
+                dash.attach({url: '/metrics'});
+            }
 
             // Logs files
             if (!fs.existsSync('logs')) {

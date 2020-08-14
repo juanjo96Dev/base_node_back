@@ -8,5 +8,4 @@ export const iocLoader: MicroframeworkLoader = (settings: MicroframeworkSettings
     routingUseContainer(Container);
     ormUseContainer(Container);
     classValidatorUseContainer(Container);
-    console.log('ioc load');
 };

@@ -16,6 +16,5 @@ export const homeLoader: MicroframeworkLoader = (settings: MicroframeworkSetting
                 });
             }
         );
-        console.log('home load');
     }
 };

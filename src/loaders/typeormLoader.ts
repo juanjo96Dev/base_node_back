@@ -29,7 +29,6 @@ export const typeormLoader: MicroframeworkLoader = async (settings: Microframewo
     if (settings) {
         settings.setData('connection', connection);
         settings.onShutdown(() => connection.close());
-        console.log('typeorm load');
 
     }
 };
