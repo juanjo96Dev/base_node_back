@@ -49,7 +49,9 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
             //     res.status(404).json('Error 404: Not found');
             // });
 
-            const server = expressApp.listen(env.app.port);
+            const server = expressApp.listen(env.app.port, () => {
+                console.log(`Express using port: ${env.app.port}`);
+            });
             settings.setData('express_server', server);
         }
 
