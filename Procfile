@@ -1,1 +1,1 @@
-web: node dist/app.js
+web: pm2 start dist/app.js
