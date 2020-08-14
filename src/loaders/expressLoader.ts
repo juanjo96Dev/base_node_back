@@ -6,12 +6,14 @@ import path from 'path';
 
 import { authorizationChecker } from '../auth/authorizationChecker';
 import { currentUserChecker } from '../auth/currentUserChecker';
-import dash from 'appmetrics-dash';
+// import dash from 'appmetrics-dash';
 
 import { env } from '@src/env';
 import fs from 'fs';
 
 export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSettings | undefined) => {
+
+    console.log('settings check');
     if (settings) {
         const connection = settings.getData('connection');
 
@@ -33,9 +35,9 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
 
         if (!env.isTest) {
 
-            if (env.metrics.enabled) {
-                dash.attach({url: '/metrics'});
-            }
+            // if (env.metrics.enabled) {
+            //     dash.attach({url: '/metrics'});
+            // }
 
             // Logs files
             if (!fs.existsSync('logs')) {
@@ -43,11 +45,6 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
             }
             const accessLogStream = fs.createWriteStream(path.join(__dirname, '../../', 'logs', 'performance.csv'), { flags: 'a' });
             expressApp.use(morgan(':method\,:url\,:status\,:response-time\,:res[content-length]', { stream: accessLogStream }));
-
-            // // 404 error
-            // expressApp.use((req, res, next) => {
-            //     res.status(404).json('Error 404: Not found');
-            // });
 
             const server = expressApp.listen(env.app.port, () => {
                 console.log(`Express using port: ${env.app.port}`);
