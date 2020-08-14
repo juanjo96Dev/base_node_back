@@ -1,5 +1,5 @@
 import { env } from '@src/env';
-import { Logger } from '@lib/Logger';
+import { Logger } from '@lib/logger/index';
 
 export function banner(log: Logger): void {
 
