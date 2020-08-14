@@ -58,6 +58,6 @@ export const swaggerLoader: MicroframeworkLoader = async (settings: Microframewo
             swaggerUi.serve,
             swaggerUi.setup(swaggerFile)
         );
-
+        console.log('swagger load');
     }
 };

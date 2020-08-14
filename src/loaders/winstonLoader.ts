@@ -20,4 +20,6 @@ export const winstonLoader: MicroframeworkLoader = (settings: MicroframeworkSett
             }),
         ],
     });
+    console.log('winston load');
+
 };

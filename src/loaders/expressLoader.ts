@@ -56,5 +56,6 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
         }
 
         settings.setData('express_app', expressApp);
+        console.log('express load');
     }
 };
