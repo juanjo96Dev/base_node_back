@@ -71,6 +71,12 @@
     "typeorm-seeding": "^1.6.1",
     "typeorm-typedi-extensions": "^0.2.3",
     "uuid": "^3.4.0",
+    "cross-env": "^5.2.1",
+    "mock-express-response": "^0.2.1",
+    "nodemon": "^2.0.4",
+    "ts-node": "7.0.1",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "3.9.7",
     "winston": "^3.3.3"
   },
   "resolutions": {
@@ -107,12 +113,6 @@
     "@types/supertest": "^2.0.10",
     "@types/uuid": "^3.4.9",
     "@types/winston": "^2.3.7",
-    "cross-env": "^5.2.1",
-    "mock-express-response": "^0.2.1",
-    "nodemon": "^2.0.4",
-    "ts-node": "7.0.1",
-    "tsconfig-paths": "^3.9.0",
-    "typescript": "3.9.7",
     "nock": "10.0.0"
   }
 }
