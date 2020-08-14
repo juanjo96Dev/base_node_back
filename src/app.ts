@@ -33,5 +33,7 @@ const log = new Logger(__filename);
 winstonLoader();
 iocLoader();
 
+console.log('before express');
 expressLoader().then(() => banner(log))
 .catch(error => log.error(error));
+console.log('after express');

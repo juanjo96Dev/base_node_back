@@ -3,6 +3,7 @@ import { Logger } from '@lib/logger/index';
 
 export function banner(log: Logger): void {
 
+    console.log('banner');
     if (env.app.banner) {
         const route = () => `${env.app.schema}://${env.app.host}:${env.app.port}`;
         log.info(``);
