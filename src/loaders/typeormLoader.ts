@@ -1,13 +1,11 @@
 import { MicroframeworkLoader, MicroframeworkSettings } from 'microframework-w3tec';
-import { createConnection, getConnectionOptions } from 'typeorm';
+import { createConnection } from 'typeorm';
 
 import { env } from '@src/env';
 
 export const typeormLoader: MicroframeworkLoader = async (settings: MicroframeworkSettings | undefined) => {
 
-    const loadedConnectionOptions = await getConnectionOptions();
-
-    const connectionOptions = Object.assign(loadedConnectionOptions, {
+    const connectionOptions = {
         url: env.db.url,
         type: env.db.type as any,
         host: env.db.host,
@@ -22,7 +20,7 @@ export const typeormLoader: MicroframeworkLoader = async (settings: Microframewo
         ssl: {
             rejectUnauthorized: false,
         },
-    });
+    };
 
     console.log('work');
 
