@@ -23,6 +23,8 @@ export const typeormLoader: MicroframeworkLoader = async (settings: Microframewo
         },
     });
 
+    createConnection(connectionOptions).catch((err) => console.error(err));
+
     const connection = await createConnection(connectionOptions);
 
     settings.setData('connection', connection);
