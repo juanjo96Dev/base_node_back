@@ -1,7 +1,9 @@
 import { env } from '@src/env';
-import * as log from 'heroku-logger';
+import { Logger } from '@lib/Logger';
 
-export function banner(): void {
+export function banner(log: Logger): void {
+
+    console.log('banner');
     if (env.app.banner) {
         const route = () => `${env.app.schema}://${env.app.host}:${env.app.port}`;
         log.info(``);

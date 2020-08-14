@@ -48,5 +48,5 @@ bootstrapMicroframework({
         homeLoader,
     ],
 })
-    .then(() => banner())
+    .then(() => banner(log))
     .catch(error => log.error(error));
