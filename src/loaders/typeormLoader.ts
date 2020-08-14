@@ -19,14 +19,15 @@ export const typeormLoader: MicroframeworkLoader = async (settings: Microframewo
         entities: env.app.dirs.entities,
         migrations: env.app.dirs.migrations,
         extra: {
-            ssl: true,
+            ssl: {
+                rejectUnauthorized: false,
+              },
         },
     });
-
-    createConnection(connectionOptions).catch((err) => console.error(err));
 
     const connection = await createConnection(connectionOptions);
 
     settings.setData('connection', connection);
     settings.onShutdown(() => connection.close());
+    console.log('typeorm connection created');
 };
