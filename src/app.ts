@@ -48,5 +48,5 @@ bootstrapMicroframework({
         homeLoader,
     ],
 })
-    .then(() => banner(log))
-    .catch(error => log.error(error));
+    .then(() => { banner(log); console.log('banner init'); })
+    .catch(error => { log.error(error); console.log('error'); });
