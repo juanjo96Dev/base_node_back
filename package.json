@@ -1,6 +1,6 @@
 {
   "name": "netBack",
-  "version": "1.2.0",
+  "version": "1.2.48",
   "description": "General back",
   "main": "src/app.ts",
   "scripts": {
