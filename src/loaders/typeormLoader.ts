@@ -1,11 +1,14 @@
 import { MicroframeworkLoader, MicroframeworkSettings } from 'microframework-w3tec';
 import { createConnection, getConnectionOptions } from 'typeorm';
 
-import { env } from '../env';
+import { env } from '@src/env';
 
 export const typeormLoader: MicroframeworkLoader = async (settings: MicroframeworkSettings | undefined) => {
+    console.log('swagger init');
 
     const loadedConnectionOptions = await getConnectionOptions();
+
+    console.log('loadedConnectionOptions loaded');
 
     const connectionOptions = Object.assign(loadedConnectionOptions, {
         type: env.db.type as any,
@@ -24,11 +27,15 @@ export const typeormLoader: MicroframeworkLoader = async (settings: Microframewo
           },
     });
 
+    console.log('connectionOptions created');
+
     const connection = await createConnection(connectionOptions);
+
+    console.log('connection created');
 
     if (settings) {
         settings.setData('connection', connection);
         settings.onShutdown(() => connection.close());
-
+        console.log('typeorm connection created');
     }
 };
