@@ -4,11 +4,8 @@ import { createConnection, getConnectionOptions } from 'typeorm';
 import { env } from '@src/env';
 
 export const typeormLoader: MicroframeworkLoader = async (settings: MicroframeworkSettings | undefined) => {
-    console.log('swagger init');
 
     const loadedConnectionOptions = await getConnectionOptions();
-
-    console.log('loadedConnectionOptions loaded');
 
     const connectionOptions = Object.assign(loadedConnectionOptions, {
         type: env.db.type as any,
@@ -21,19 +18,11 @@ export const typeormLoader: MicroframeworkLoader = async (settings: Microframewo
         logging: env.db.logging,
         entities: env.app.dirs.entities,
         migrations: env.app.dirs.migrations,
-        ssl: {
-            ca: process.env.SSL_CERT,
-            rejectUnauthorized: false,
-          },
+        ssl: true,
     });
-
-    console.log('connectionOptions created');
 
     const connection = await createConnection(connectionOptions);
 
-    console.log('connection created', settings);
-
     settings.setData('connection', connection);
     settings.onShutdown(() => connection.close());
-    console.log('typeorm connection created');
 };
