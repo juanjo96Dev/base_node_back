@@ -62,6 +62,9 @@ export const env = {
         username: getOsEnv('SWAGGER_USERNAME'),
         password: getOsEnv('SWAGGER_PASSWORD'),
     },
+    morgan: {
+        enabled: toBool(getOsEnv('MORGAN_ENABLED')),
+    },
     metrics: {
         enabled: toBool(getOsEnv('METRICS_ENABLED')),
     },

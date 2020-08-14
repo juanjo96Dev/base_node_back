@@ -17,6 +17,8 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
     if (settings) {
         const connection = settings.getData('connection');
 
+        const port = env.app.port;
+
         const expressApp: Application = createExpressServer({
             cors: true,
             classTransformer: true,
@@ -28,7 +30,6 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
             /**
              * Authorization
              */
-
             authorizationChecker: authorizationChecker(connection),
             currentUserChecker: currentUserChecker(connection),
         });
@@ -39,15 +40,17 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
                 dash.attach({url: '/metrics'});
             }
 
-            // Logs files
-            if (!fs.existsSync('logs')) {
-                fs.mkdirSync('logs');
+            if ( env.morgan.enabled ) {
+                // Logs files
+                if (!fs.existsSync('logs')) {
+                    fs.mkdirSync('logs');
+                }
+                const accessLogStream = fs.createWriteStream(path.join(__dirname, '../../', 'logs', 'performance.csv'), { flags: 'a' });
+                expressApp.use(morgan(':method\,:url\,:status\,:response-time\,:res[content-length]', { stream: accessLogStream }));
             }
-            const accessLogStream = fs.createWriteStream(path.join(__dirname, '../../', 'logs', 'performance.csv'), { flags: 'a' });
-            expressApp.use(morgan(':method\,:url\,:status\,:response-time\,:res[content-length]', { stream: accessLogStream }));
 
-            const server = expressApp.listen(env.app.port, () => {
-                console.log(`Express using port: ${env.app.port}`);
+            const server = expressApp.listen(port, () => {
+                console.log(`Express using port: ${port}`);
             });
             settings.setData('express_server', server);
         }
