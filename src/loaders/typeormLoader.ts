@@ -8,6 +8,7 @@ export const typeormLoader: MicroframeworkLoader = async (settings: Microframewo
     const loadedConnectionOptions = await getConnectionOptions();
 
     const connectionOptions = Object.assign(loadedConnectionOptions, {
+        url: env.db.url,
         type: env.db.type as any,
         host: env.db.host,
         port: env.db.port,
@@ -23,9 +24,11 @@ export const typeormLoader: MicroframeworkLoader = async (settings: Microframewo
         },
     });
 
-    console.log(loadedConnectionOptions);
+    console.log('work');
 
     const connection = await createConnection(connectionOptions);
+
+    console.log('still working');
 
     settings.setData('connection', connection);
     settings.onShutdown(() => connection.close());

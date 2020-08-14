@@ -13,7 +13,7 @@ export function getOsEnvOptional(key: string): string | undefined {
 }
 
 export function getPath(path: string): string {
-    return (__dirname.indexOf('dist') > 0)
+    return (process.env.NODE_ENV === 'production')
         ? join(process.cwd(), path.replace('src/', 'dist/').slice(0, -3) + '.js')
         : join(process.cwd(), path);
 }
