@@ -7,7 +7,7 @@
     "start": "nps",
     "test": "npm start test",
     "build": "npm start build",
-    "presetup": "yarn install --frozen-lockfile",
+    "presetup": "yarn install",
     "setup": "npm start config && npm start setup.script"
   },
   "engines": {
