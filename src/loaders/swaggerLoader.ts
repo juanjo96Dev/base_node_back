@@ -1,14 +1,11 @@
-import basicAuth from 'express-basic-auth';
-import { MicroframeworkLoader, MicroframeworkSettings } from 'microframework-w3tec';
 import * as path from 'path';
-import * as swaggerUi from 'swagger-ui-express';
+
 import { env } from '../env';
 import { swaggerScraper } from '@lib/swagger-scraper/index';
 import fs from 'fs';
 
-export const swaggerLoader: MicroframeworkLoader = async (settings: MicroframeworkSettings | undefined) => {
-    if (settings && env.swagger.enabled) {
-        const expressApp = settings.getData('express_app');
+export const swaggerLoader = async () => {
+    if (env.swagger.enabled) {
         const pahFile = path.join(__dirname, '..', env.swagger.file);
         const swaggerFile = require(pahFile);
 
@@ -47,17 +44,6 @@ export const swaggerLoader: MicroframeworkLoader = async (settings: Microframewo
 
         }
 
-        expressApp.use(
-            env.swagger.route,
-            env.swagger.username ? basicAuth({
-                users: {
-                    [`${env.swagger.username}`]: env.swagger.password,
-                },
-                challenge: true,
-            }) : (req, res, next) => next(),
-            swaggerUi.serve,
-            swaggerUi.setup(swaggerFile)
-        );
-
+        return swaggerFile;
     }
 };
