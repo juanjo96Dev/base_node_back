@@ -1,15 +1,15 @@
 import { Application } from 'express';
 import { MicroframeworkLoader, MicroframeworkSettings } from 'microframework-w3tec';
 import { createExpressServer } from 'routing-controllers';
-const morgan = require('morgan');
-const path = require('path');
+import morgan from 'morgan';
+import path from 'path';
 
-import { authorizationChecker } from '@auth/authorizationChecker';
-import { currentUserChecker } from '@auth/currentUserChecker';
-const dash = require('appmetrics-dash');
+import { authorizationChecker } from '../auth/authorizationChecker';
+import { currentUserChecker } from '../auth/currentUserChecker';
+import dash from 'appmetrics-dash';
 
-import { env } from '@src/env';
-const fs = require('fs');
+import { env } from '../env';
+import fs from 'fs';
 
 export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSettings | undefined) => {
 
