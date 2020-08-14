@@ -7,7 +7,7 @@ import { swaggerScraper } from '@lib/swagger-scraper/index';
 import fs from 'fs';
 
 export const swaggerLoader: MicroframeworkLoader = async (settings: MicroframeworkSettings | undefined) => {
-    if (settings && env.swagger.enabled) {
+    if (env.swagger.enabled) {
         const expressApp = settings.getData('express_app');
         const pahFile = path.join(__dirname, '..', env.swagger.file);
         const swaggerFile = require(pahFile);

@@ -13,49 +13,45 @@ import fs from 'fs';
 
 export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSettings | undefined) => {
 
-    console.log('settings check');
-    if (settings) {
-        const connection = settings.getData('connection');
+    const connection = settings.getData('connection');
 
-        const port = env.app.port;
+    const port = env.app.port;
 
-        const expressApp: Application = createExpressServer({
-            cors: true,
-            classTransformer: true,
-            defaultErrorHandler: false,
-            routePrefix: env.app.routePrefix,
-            middlewares: env.app.dirs.middlewares,
-            controllers: env.app.dirs.controllers,
+    const expressApp: Application = createExpressServer({
+        cors: true,
+        classTransformer: true,
+        defaultErrorHandler: false,
+        routePrefix: env.app.routePrefix,
+        middlewares: env.app.dirs.middlewares,
+        controllers: env.app.dirs.controllers,
 
-            /**
-             * Authorization
-             */
-            authorizationChecker: authorizationChecker(connection),
-            currentUserChecker: currentUserChecker(connection),
-        });
+        /**
+         * Authorization
+         */
+        authorizationChecker: authorizationChecker(connection),
+        currentUserChecker: currentUserChecker(connection),
+    });
 
-        if (!env.isTest) {
+    if (!env.isTest) {
 
-            if (env.metrics.enabled) {
-                dash.attach({url: '/metrics'});
-            }
-
-            if ( env.morgan.enabled ) {
-                // Logs files
-                if (!fs.existsSync('logs')) {
-                    fs.mkdirSync('logs');
-                }
-                const accessLogStream = fs.createWriteStream(path.join(__dirname, '../../', 'logs', 'performance.csv'), { flags: 'a' });
-                expressApp.use(morgan(':method\,:url\,:status\,:response-time\,:res[content-length]', { stream: accessLogStream }));
-            }
-
-            const server = expressApp.listen(port, () => {
-                console.log(`Express using port: ${port}`);
-            });
-            settings.setData('express_server', server);
+        if (env.metrics.enabled) {
+            dash.attach({url: '/metrics'});
         }
 
-        settings.setData('express_app', expressApp);
-        console.log('express load');
+        if ( env.morgan.enabled ) {
+            // Logs files
+            if (!fs.existsSync('logs')) {
+                fs.mkdirSync('logs');
+            }
+            const accessLogStream = fs.createWriteStream(path.join(__dirname, '../../', 'logs', 'performance.csv'), { flags: 'a' });
+            expressApp.use(morgan(':method\,:url\,:status\,:response-time\,:res[content-length]', { stream: accessLogStream }));
+        }
+
+        const server = expressApp.listen(port, () => {
+            console.log(`Express using port: ${port}`);
+        });
+        settings.setData('express_server', server);
     }
+
+    settings.setData('express_app', expressApp);
 };
