@@ -2,7 +2,7 @@
   "name": "netBack",
   "version": "1.2.0",
   "description": "General back",
-  "main": "src/app.ts",
+  "main": "dist/app.js",
   "scripts": {
     "start": "nps",
     "test": "npm start test",
