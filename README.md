@@ -49,7 +49,7 @@ Rename the env.example file to .env and edit this file with your database connec
 Create a new database with the name provided in your .env file.
 
 ```bash
-yarn install
+yarn install --frozen-lockfile
 ```
 
 > This install al the dependecies declared in the package.json file.
