@@ -47,9 +47,7 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
             expressApp.use(morgan(':method\,:url\,:status\,:response-time\,:res[content-length]', { stream: accessLogStream }));
         }
 
-        const server = expressApp.listen(port, () => {
-            console.log(`Express using port: ${port}`);
-        });
+        const server = expressApp.listen(port);
         settings.setData('express_server', server);
     }
 

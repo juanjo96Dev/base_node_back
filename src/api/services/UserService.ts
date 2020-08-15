@@ -1,10 +1,7 @@
 import { Service } from 'typedi';
-import { OrmRepository } from 'typeorm-typedi-extensions';
-
 import { EventDispatcher, EventDispatcherInterface } from '../../decorators/EventDispatcher';
 import { Logger, LoggerInterface } from '../../decorators/Logger';
 import { User } from '../models/User';
-import { UserRepository } from '../repositories/UserRepository';
 import { events } from '../subscribers/events';
 import bcrypt from 'bcrypt';
 import { RoleService } from './RoleService';
@@ -13,7 +10,6 @@ import { RoleService } from './RoleService';
 export class UserService {
 
     constructor(
-        @OrmRepository() private userRepository: UserRepository,
         @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
         @Logger(__filename) private log: LoggerInterface,
         private roleService: RoleService
@@ -36,7 +32,7 @@ export class UserService {
 
     public findOne(id: string): Promise<User | undefined> {
         this.log.info('Find one user');
-        return this.userRepository.findOne({ relations: ['policies'], where: { id } });
+        return User.findOne({ relations: ['policies'], where: { id } });
     }
 
     public async create(user: User) {
@@ -50,7 +46,7 @@ export class UserService {
             .then(async (hashedPassword)  => {
                 user.password = hashedPassword;
                 user.role = Number(await this.roleService.getDefaultRole());
-                newUser = await this.userRepository.save(user);
+                newUser = await User.save(user);
                 this.eventDispatcher.dispatch(events.user.created, newUser);
             })
             .catch((error) => {
@@ -63,12 +59,12 @@ export class UserService {
 
     public update(id: string, user: User): Promise<User> {
         this.log.info('Update a user');
-        return this.userRepository.save(user);
+        return User.save(user);
     }
 
     public async delete(id: string): Promise<void> {
         this.log.info('Delete a user');
-        await this.userRepository.delete(id);
+        await User.delete(id);
         return;
     }
 
