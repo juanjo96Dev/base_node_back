@@ -31,7 +31,10 @@ export const typeormLoader: MicroframeworkLoader = async (settings: Microframewo
 
     const connect2Database = async (): Promise<void> => {
         const typeormconfig = await getOptions();
-        await createConnection(typeormconfig);
+        const connection = await createConnection(typeormconfig);
+        console.log('work');
+        settings.setData('connection', connection);
+        settings.onShutdown(() => connection.close());
     };
 
     connect2Database().then(async () => {
